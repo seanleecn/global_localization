@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="stdr_teleop" type="stdr_teleop_key.py" name="stdr_teleop_key" output="screen">
+    <remap from="cmd_vel" to="robot0/cmd_vel"/>
+  </node>
+</launch>

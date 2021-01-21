@@ -1,0 +1,6 @@
+<launch>
+    <!-- load home map -->
+    <node pkg="map_server" type="map_server" name="stdr_load_home_map" args="$(find stdr_diymap)/maps/home.yaml">
+        <remap from="map" to="/amcl/map" />
+    </node>
+</launch>

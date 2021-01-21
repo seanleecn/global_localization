@@ -1,0 +1,15 @@
+<launch>
+  <!-- load stdr simulator with robot0 -->
+  <include file="$(find stdr_navigation)/launch/diy_map_nav.launch" />
+
+  <!-- startup patrol navigation node -->
+  <node pkg="stdr_navigation" type="patrol_nav.py" name="patrol_nav_node" output="screen">
+    <param name="rest_time" value="5" />
+    <param name="keep_patrol" value="false" />
+    <param name="random_patrol" value="false" />
+    <param name="patrol_type" value="0" />
+    <!-- patrol_type=0,即按圈巡航 -->
+    <param name="patrol_loop" value="1" />
+    <param name="patrol_time" value="3" />
+  </node>
+</launch>

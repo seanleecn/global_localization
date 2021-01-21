@@ -1,0 +1,77 @@
+<launch>
+    <!-- startup rviz node to show amcl process -->
+    <node name="amcl_rviz" type="rviz" pkg="rviz" args="-d $(find stdr_amcl)/rviz/stdr_amcl_config.rviz" />
+
+    <!-- Run amcl -->
+    <node pkg="amcl" type="amcl" name="stdr_amcl_node" output="screen">
+        <!-- amcl default subscribe scan topic, now remap to /robot0/laser_0 -->
+        <remap from="scan" to="/robot0/laser_0"/>
+
+        <!-- amcl default subscribe map topic, now remap to /amcl/map -->
+        <remap from="map" to="/amcl/map" />
+
+        <!-- overall filter parameters -->
+
+        <!-- 粒子数目,最少和最多 -->
+        <param name="min_particles" value="1000"/>
+        <param name="max_particles" value="5000"/>
+
+        <!-- 真实分布与估计分布之间的最大误差 -->
+        <param name="kld_err" value="0.01"/>
+        <param name="kld_z" value="0.99"/>
+
+        <param name="update_min_d" value="0.05"/>
+        <param name="update_min_a" value="0.05"/>
+        <param name="resample_interval" value="2"/>
+        <param name="transform_tolerance" value="0.5"/>
+        <param name="recovery_alpha_slow" value="0.001"/>
+        <param name="recovery_alpha_fast" value="0.1"/>
+
+        <!-- set particles init pose to robot pose -->
+        <!-- 初始位置 用于初始化高斯分布过滤器 真实的位置在 8 28 -->
+        <param name="initial_pose_x" value="8"/>
+        <param name="initial_pose_y" value="28"/>
+        <param name="initial_pose_a" value="0"/>
+        <param name="initial_cov_xx" value="0.25"/><!-- 0.5 * 0.5 -->
+        <param name="initial_cov_yy" value="0.25"/>
+        <param name="initial_cov_aa" value="0.068538917"/><!-- pi/12 * pi/12 -->
+        <param name="gui_publish_rate" value="-1.0"/>
+        <param name="save_pose_rate" value="0.5"/>
+        <!-- 下面参数可以设置从一个话题订阅话题,后续做动态地图或许有用??? -->
+        <param name="use_map_topic" value="false"/>
+        <param name="first_map_only" value="false"/>
+
+        <!-- laser model parameters -->
+        <!-- 激光模型参数 -->
+        <param name="laser_min_range" value="0.05"/>
+        <param name="laser_max_range" value="8.0"/>
+        <param name="laser_max_beams" value="60"/>
+        <!-- 这4个laser_z_参数，是在动态环境下的定位时用于异常值去除技术的参数。
+        请注意无论使用哪种混合权重都应该等于1
+        对于laser_model_type是beam时会用到4个参数z_hit，z_short，z_max和z_rand
+        如果是likelihood_field模型仅使用2个：z_hit和z_rand -->
+        <param name="laser_z_hit" value="0.95"/>
+        <param name="laser_z_short" value="0.1"/>
+        <param name="laser_z_max" value="0.05"/>
+        <param name="laser_z_rand" value="0.05"/>
+        <param name="laser_sigma_hit" value="0.2"/>
+        <!-- sigma是障碍物膨胀的一个超参数,反映了算法的收敛性 -->
+        <param name="laser_lambda_short" value="0.1"/>
+        <!-- 似然域模型 -->
+        <param name="laser_likelihood_max_dist" value="2.0"/> <!-- 地图上障碍物膨胀的最大距离,(集体用法还没看懂)用到了laser_sigma_hit函数 -->
+        <param name="laser_model_type" value="likelihood_field"/>
+
+        <!-- Odometry model parameters -->
+        <!-- 里程计模型参数 -->
+        <param name="odom_model_type" value="diff"/>
+        <param name="odom_alpha1" value="0.03"/>
+        <param name="odom_alpha2" value="0.03"/>
+        <param name="odom_alpha3" value="0.03"/>
+        <param name="odom_alpha4" value="0.03"/>
+        <param name="odom_alpha5" value="0.0"/><!--only used if model is "omni"-->
+        <param name="odom_frame_id" value="/map_static"/><!-- 在stdr中由于没有odom坐标系，因此使用/map_static来代替odom坐标系 -->
+        <param name="base_frame_id" value="/robot0"/>
+        <param name="global_frame_id" value="/map"/>
+        <param name="tf_broadcast" value="true"/>
+    </node>
+</launch>

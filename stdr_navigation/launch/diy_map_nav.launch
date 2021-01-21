@@ -1,0 +1,12 @@
+<launch>
+    <!-- 把diy的地图加载到仿真环境中 -->
+    <!-- 这里设置仿真环境中的初始位置 -->
+    <include file="$(find stdr_diymap)/launch/diy_map_robot_gui.launch" />
+    <!-- startup move_base node -->
+    <include file="$(find stdr_move_base)/launch/stdr_move_base.launch" />
+    <!-- 把diy的地图加载到map_server给机器人导航用 -->
+    <include file="$(find stdr_diymap)/launch/load_diy_map.launch" />
+    <!-- startup amcl node -->
+    <!-- 这里设置导航地图中的初始位置 -->
+    <include file="$(find stdr_amcl)/launch/diy_map_amcl.launch" />
+</launch>

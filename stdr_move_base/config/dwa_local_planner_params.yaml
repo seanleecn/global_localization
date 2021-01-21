@@ -1,0 +1,64 @@
+DWAPlannerROS:
+# Robot Configuration Parameters - stdr robot
+
+# 局部路径规划参数相当重要，因为它是直接控制机器人的移动底盘运动的插件
+# 它负责来向移动底盘的/cmd_vel话题中发布控制命令。机器人移动的效果好不好，这个局部路径规划可是影响最大的。
+
+# DWA算法的基本思想
+#   1.在机器人控制空间离散采样(dx, dy, dtheta)
+#   2.对每一个采样的速度进行前向模拟,看看在当前状态下,使用该采样速度移动一小段时间后会发生什么.
+#   3.评价前向模拟得到的每个轨迹,是否接近障碍物,是否接近目标,是否接近全局路径以及速度等等.舍弃非法路径
+#   4.选择得分最高的路径,发送对应的速度给底座
+
+  acc_lim_x: 0.3  # maximum is theoretically 2.0
+  # acc_lim_x:x方向的加速度绝对值
+  acc_lim_y: 0.0  # diff drive robot
+  # acc_lim_y:y方向的加速度绝对值,该值只有全向移动的机器人才需配置.
+  acc_lim_th: 0.3
+  # acc_lim_th:旋转加速度的绝对值.
+
+  max_vel_trans: 0.3 #choose slightly less than the base's capability
+  # max_trans_vel:平移速度最大值绝对值
+  # min_trans_vel: 0.1 #this is the min trans velocity when there is negligible rotational velocity
+  min_vel_trans: 0.1
+  # min_trans_vel:平移速度最小值的绝对值
+
+  max_vel_x: 0.3
+  min_vel_x: -0.1
+  max_vel_y: 0.0  #diff drive robot,don't need set vel_y
+  min_vel_y: 0.0
+
+  # max_rot_vel: 0.5  #choose slightly less than the base's capability
+  max_vel_theta: 0.5
+  # min_rot_vel: 0.1  #this is the min angular velocity when there is negligible translational velocity
+  min_vel_theta: 0.1
+
+# Goal Tolerance Parameters
+  yaw_goal_tolerance: 0.1  # 0.1 rad = 5.7 degree
+  xy_goal_tolerance: 0.12
+  latch_xy_goal_tolerance: false
+
+# Forward Simulation Parameters
+  sim_time: 2.0    # 1.7
+  sim_granularity: 0.025
+  vx_samples: 6    # default 3
+  vy_samples: 1    # diff drive robot, there is only one sample
+  vth_samples: 20  # 20
+  controller_frequency: 5.0
+
+# Trajectory Scoring Parameters
+  path_distance_bias: 90.0      # 32.0
+  goal_distance_bias: 24.0      # 24.0
+  occdist_scale: 0.3            # 0.01
+  forward_point_distance: 0.325 # 0.325
+  stop_time_buffer: 0.2         # 0.2
+  scaling_speed: 0.20           # 0.25
+  max_scaling_factor: 0.2       # 0.2
+  publish_cost_grid: false
+  # publish_cost_grid:是否发布规划器在规划路径时的代价网格.如果设置为true,那么就会在~/cost_cloud话题上发布sensor_msgs/PointCloud2类型消息.
+
+# Oscillation Prevention Parameters
+  oscillation_reset_dist: 0.05  # default 0.05
+
+# Global Plan Parameters
+  prune_plan: false
